@@ -8,12 +8,8 @@
         <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
     </Authorized>
     <NotAuthorized>
-        <a href="authentication/register">Register</a>
-        @*<a href="pages/external">Log in</a>*@
-        @*<a href="authentication">Log in</a>*@
-        
-        <a href="authentication/login">Log in</a>
-        <button class="btn btn-primary" @onclick="ExternalLogin">Log in</button>
+        <a href="authentication/register">Register</a>              
+        <a href="/login">Log in</a>
 
     </NotAuthorized>
 </AuthorizeView>
@@ -22,10 +18,5 @@
     private void BeginLogOut()
     {
         Navigation.NavigateToLogout("authentication/logout");
-    }   
-    private void ExternalLogin()
-    {
-        Navigation.NavigateTo("/pages/external?returnurl=/", true);
-
-    }
+    }       
 }

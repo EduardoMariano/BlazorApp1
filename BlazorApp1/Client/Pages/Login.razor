@@ -1,0 +1,29 @@
+﻿@page "/login"
+@using BlazorApp1.Shared;
+@inject NavigationManager Navigation
+<PageTitle>Login</PageTitle>
+
+
+@*<button class="btn btn-primary" @onclick="ExternalLogin">Log in</button>*@
+
+@foreach (var item in identityProviders)
+{
+    <button class="btn btn-primary" @onclick="() => ExternalLogin(item)">@item.DisplayName</button>
+}
+
+
+@code {
+    List<IdentityProvider> identityProviders = new List<IdentityProvider>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        identityProviders.Add(new IdentityProvider { AuthenticationScheme = "oidc", DisplayName = "Google" });
+        identityProviders.Add(new IdentityProvider { AuthenticationScheme = "oidc-idserver", DisplayName = "Azure AD" });
+
+    }
+    private void ExternalLogin(IdentityProvider schema)
+    {
+        Navigation.NavigateTo("/pages/external?returnurl=/&schema=" + schema.AuthenticationScheme, true);
+
+    }
+}
