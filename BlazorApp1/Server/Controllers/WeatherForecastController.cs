@@ -21,6 +21,8 @@ namespace BlazorApp1.Server.Controllers
             _logger = logger;
         }
 
+
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {
