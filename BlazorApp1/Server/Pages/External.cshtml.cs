@@ -109,8 +109,14 @@ namespace BlazorApp1.Server.Pages
                 var userResult = await _userManager.CreateAsync(user);
                 if (userResult.Succeeded)
                 {
+                    IdentityResult roleResult;
+                    if (info.LoginProvider == "oidc")
+                        roleResult = await _userManager.AddToRoleAsync(user, "Admin");
+                    else
+                        roleResult = await _userManager.AddToRoleAsync(user, "User");
+
                     var res = await _userManager.AddLoginAsync(user, info);
-                    if (res.Succeeded)
+                    if (res.Succeeded && roleResult.Succeeded)
                     {                      
 
                         var userId = await _userManager.GetUserIdAsync(user);
