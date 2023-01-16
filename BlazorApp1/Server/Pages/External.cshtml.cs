@@ -51,19 +51,20 @@ namespace BlazorApp1.Server.Pages
             
         }
 
-        public IActionResult OnGetAsync(string returnurl, string schema)
+        public IActionResult OnGetAsync(string returnUrl, string schema)
         {
-            returnurl = (returnurl == null) ? "/" : returnurl;
-            returnurl = (!returnurl.StartsWith("/")) ? "/" + returnurl : returnurl;
+            returnUrl = (returnUrl == null) ? "/" : returnUrl;
+            returnUrl = (!returnUrl.StartsWith("/")) ? "/" + returnUrl : returnUrl;
 
-            var providertype = schema;
-            if (providertype != "")
-            {
-                var sh = returnurl + (returnurl.Contains("?") ? "&" : "?") + "reload=post";
-                var redirectUrl = Url.Page("./External", pageHandler: "Callback", values: new { sh });
-                var properties = _signInManager.ConfigureExternalAuthenticationProperties(providertype, redirectUrl);
-                return new ChallengeResult(providertype, properties);
-                //return new ChallengeResult(providertype, new AuthenticationProperties { RedirectUri = returnurl + (returnurl.Contains("?") ? "&" : "?") + "reload=post" });
+            if (schema == "oidc")
+                returnUrl = "/fetchdata";
+            else
+                returnUrl = "/counter";
+            if (schema != "")
+            {                
+                var redirectUrl = Url.Page("./External", pageHandler: "Callback", values: new { returnUrl });
+                var properties = _signInManager.ConfigureExternalAuthenticationProperties(schema, redirectUrl);
+                return new ChallengeResult(schema, properties);                
             }
             else
             {
@@ -180,7 +181,6 @@ namespace BlazorApp1.Server.Pages
                 throw new NotSupportedException("The default UI requires a user store with email support.");
             }
             return (IUserEmailStore<ApplicationUser>)_userStore;
-        }
-
+        }        
     }
 }
