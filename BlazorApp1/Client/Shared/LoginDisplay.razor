@@ -5,18 +5,20 @@
 <AuthorizeView>
     <Authorized>
         <a href="authentication/profile">Hello, @context.User.Identity?.Name!</a>
-        <button class="nav-link btn btn-link" @onclick="BeginLogOut">Log out</button>
+        <button class="nav-link btn btn-link" @onclick="logOutExternal">Log out</button>
     </Authorized>
     <NotAuthorized>
         <a href="authentication/register">Register</a>              
-        <a href="/login">Log in</a>
+        <a href="/Home/Index">Log in</a>
 
     </NotAuthorized>
 </AuthorizeView>
 
 @code{
-    private void BeginLogOut()
+    private void logOutExternal()
     {
-        Navigation.NavigateToLogout("authentication/logout");
+        //Navigation.NavigateTo("/pages/logoutExternal?returnurl=/", true);
+        Navigation.NavigateTo("/pages/logoutexternal?returnurl=/", true);
+
     }       
 }
