@@ -1,6 +1,7 @@
 ﻿using BlazorApp1.Server.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BlazorApp1.Server.Controllers
 {
@@ -29,8 +30,13 @@ namespace BlazorApp1.Server.Controllers
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
                 var result = await _signInManager.PasswordSignInAsync(email, password, false, lockoutOnFailure: false);
                 if (result.Succeeded)
-                {                   
+                {
+                    var user = await _signInManager.UserManager.FindByNameAsync(email);
+                   
+                    var claimEmailAddress = new Claim("IsUserAdmin", "true");                    
+                    await _signInManager.UserManager.AddClaimAsync(user, claimEmailAddress);                    
                     return LocalRedirect(returnUrl);
+
                 }
                 if (result.RequiresTwoFactor)
                 {

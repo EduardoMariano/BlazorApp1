@@ -12,7 +12,11 @@ builder.Services.AddHttpClient("BlazorApp1.ServerAPI", client => client.BaseAddr
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("BlazorApp1.ServerAPI"));
-
+builder.Services.AddAuthorizationCore(options =>
+{
+    options.AddPolicy("IsUserAdmin", policy =>
+        policy.RequireClaim("IsUserAdmin", "true"));
+});
 builder.Services.AddApiAuthorization();
 
 await builder.Build().RunAsync();

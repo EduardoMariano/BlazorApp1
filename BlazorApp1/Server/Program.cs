@@ -36,11 +36,19 @@ builder.Services.AddIdentityServer()
         options.ApiResources.Single().UserClaims.Add("name");
         options.IdentityResources["openid"].UserClaims.Add("role");
         options.ApiResources.Single().UserClaims.Add("role");
+        options.IdentityResources["openid"].UserClaims.Add("IsUserAdmin");
+        options.ApiResources.Single().UserClaims.Add("IsUserAdmin");
     });
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("role");
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("IsUserAdmin", policy =>
+        policy.RequireClaim("IsUserAdmin", "true"));
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -60,7 +68,7 @@ foreach (var item in builder.Configuration.GetSection("IntegrationOpenIdConnect"
 
         o.Scope.Add("openid");
         o.Scope.Add("profile");
-        o.Scope.Add("email");
+        o.Scope.Add("email");        
     }
     );    
 }

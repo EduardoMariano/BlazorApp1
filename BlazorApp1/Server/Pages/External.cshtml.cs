@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
+using static Duende.IdentityServer.Models.IdentityResources;
 
 namespace BlazorApp1.Server.Pages
 {
@@ -91,6 +92,12 @@ namespace BlazorApp1.Server.Pages
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
             if (result.Succeeded)
             {
+                if (info.LoginProvider == "oidc")
+                {
+                    var user = await _signInManager.UserManager.FindByNameAsync(info.Principal.FindFirstValue(ClaimTypes.Email));
+                    var claimEmailAddress = new Claim("IsUserAdmin", "true");
+                    await _signInManager.UserManager.AddClaimAsync(user, claimEmailAddress);
+                }                
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
@@ -127,6 +134,11 @@ namespace BlazorApp1.Server.Pages
                         var results = await _userManager.ConfirmEmailAsync(user, code);                        
                         if (results.Succeeded)
                         {
+                            if (info.LoginProvider == "oidc")
+                            {                                
+                                var claimEmailAddress = new Claim("IsUserAdmin", "true");
+                                await _signInManager.UserManager.AddClaimAsync(user, claimEmailAddress);
+                            }
                             await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
                             return LocalRedirect(returnUrl);
                         }
