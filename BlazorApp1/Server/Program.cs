@@ -38,16 +38,28 @@ builder.Services.AddIdentityServer()
         options.ApiResources.Single().UserClaims.Add("role");
         options.IdentityResources["openid"].UserClaims.Add("IsUserAdmin");
         options.ApiResources.Single().UserClaims.Add("IsUserAdmin");
+        options.IdentityResources["openid"].UserClaims.Add("AvailableButtonCounter");
+        options.ApiResources.Single().UserClaims.Add("AvailableButtonCounter");
+        options.IdentityResources["openid"].UserClaims.Add("AvailableButtonSort");
+        options.ApiResources.Single().UserClaims.Add("AvailableButtonSort");
     });
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Remove("role");
 
 builder.Services.AddAuthentication()
     .AddIdentityServerJwt();
 
+
+List<string> rolesToAvailableButtonSort = new List<string>();
+rolesToAvailableButtonSort.Add("Admin");
+rolesToAvailableButtonSort.Add("Vendor");
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("IsUserAdmin", policy =>
-        policy.RequireClaim("IsUserAdmin", "true"));
+        policy.RequireRole("Admin").RequireClaim("IsUserAdmin", "true"));
+    options.AddPolicy("AvailableButtonCounter", policy =>
+        policy.RequireRole("User").RequireClaim("AvailableButtonCounter", "true"));
+    options.AddPolicy("AvailableButtonSort", policy =>
+        policy.RequireRole(rolesToAvailableButtonSort));
 });
 
 builder.Services.AddControllersWithViews();
