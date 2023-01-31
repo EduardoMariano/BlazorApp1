@@ -32,9 +32,9 @@ namespace BlazorApp1.Server.Controllers
                 if (result.Succeeded)
                 {
                     var user = await _signInManager.UserManager.FindByNameAsync(email);
-                   
-                    var claimEmailAddress = new Claim("IsUserAdmin", "true");                    
-                    await _signInManager.UserManager.AddClaimAsync(user, claimEmailAddress);                    
+                    List<Claim> claims = new List<Claim>();
+                    claims.Add(new Claim("AvailableButtonCounter", "true"));                                    
+                    await _signInManager.UserManager.AddClaimsAsync(user, claims);                    
                     return LocalRedirect(returnUrl);
 
                 }

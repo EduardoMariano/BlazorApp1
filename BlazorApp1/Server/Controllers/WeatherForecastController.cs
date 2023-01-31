@@ -22,7 +22,7 @@ namespace BlazorApp1.Server.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Policy = "IsUserAdmin")]
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {

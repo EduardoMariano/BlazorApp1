@@ -92,12 +92,12 @@ namespace BlazorApp1.Server.Pages
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
             if (result.Succeeded)
             {
+                List<Claim> claims = new List<Claim>();
+                var user = await _signInManager.UserManager.FindByNameAsync(info.Principal.FindFirstValue(ClaimTypes.Email));
                 if (info.LoginProvider == "oidc")
-                {
-                    var user = await _signInManager.UserManager.FindByNameAsync(info.Principal.FindFirstValue(ClaimTypes.Email));
-                    var claimEmailAddress = new Claim("IsUserAdmin", "true");
-                    await _signInManager.UserManager.AddClaimAsync(user, claimEmailAddress);
-                }                
+                    claims.Add(new Claim("IsUserAdmin", "true"));                 
+                claims.Add(new Claim("AvailableButtonCounter", "true"));                
+                await _signInManager.UserManager.AddClaimsAsync(user, claims);
                 return LocalRedirect(returnUrl);
             }
             if (result.IsLockedOut)
@@ -116,15 +116,15 @@ namespace BlazorApp1.Server.Pages
 
                 var userResult = await _userManager.CreateAsync(user);
                 if (userResult.Succeeded)
-                {
+                {                    
                     IdentityResult roleResult;
                     if (info.LoginProvider == "oidc")
                         roleResult = await _userManager.AddToRoleAsync(user, "Admin");
                     else
-                        roleResult = await _userManager.AddToRoleAsync(user, "User");
-
+                        roleResult = await _userManager.AddToRoleAsync(user, "Vendor");
+                    var roleUser = await _userManager.AddToRoleAsync(user, "User");
                     var res = await _userManager.AddLoginAsync(user, info);
-                    if (res.Succeeded && roleResult.Succeeded)
+                    if (res.Succeeded && roleResult.Succeeded && roleUser.Succeeded)
                     {                      
 
                         var userId = await _userManager.GetUserIdAsync(user);
@@ -134,11 +134,11 @@ namespace BlazorApp1.Server.Pages
                         var results = await _userManager.ConfirmEmailAsync(user, code);                        
                         if (results.Succeeded)
                         {
+                            List<Claim> claims = new List<Claim>();                            
                             if (info.LoginProvider == "oidc")
-                            {                                
-                                var claimEmailAddress = new Claim("IsUserAdmin", "true");
-                                await _signInManager.UserManager.AddClaimAsync(user, claimEmailAddress);
-                            }
+                                claims.Add(new Claim("IsUserAdmin", "true"));
+                            claims.Add(new Claim("AvailableButtonCounter", "true"));                            
+                            await _signInManager.UserManager.AddClaimsAsync(user, claims);                            
                             await _signInManager.SignInAsync(user, isPersistent: false, info.LoginProvider);
                             return LocalRedirect(returnUrl);
                         }
