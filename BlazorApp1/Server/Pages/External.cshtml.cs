@@ -1,21 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Security.Claims;
-using System.Text.Encodings.Web;
-using System.Text;
-using BlazorApp1.Server.Extensions;
+﻿using BlazorApp1.Server.Extensions;
 using BlazorApp1.Server.Models;
-using Duende.IdentityServer.Models;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using static Duende.IdentityServer.Models.IdentityResources;
+using System.ComponentModel.DataAnnotations;
+using System.Net;
+using System.Security.Claims;
+using System.Text;
 
 namespace BlazorApp1.Server.Pages
 {
